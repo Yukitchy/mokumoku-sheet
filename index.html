@@ -173,6 +173,13 @@ textarea:focus{outline:none;border-color:var(--accent);background:#fff}
 .script .label{color:var(--ink-soft)}
 .script p{margin:0;font-size:14.5px;line-height:2}
 .tip{text-align:center;color:var(--ink-soft);font-size:13px;margin:14px 0 0}
+.sample-link{
+  display:inline-block;margin:10px auto 0;padding:8px 18px;
+  background:none;border:1.5px dashed var(--accent);border-radius:999px;
+  color:var(--accent);font-size:13.5px;font-weight:700;cursor:pointer;
+  font-family:inherit;
+}
+.sample-link:hover{background:rgba(0,0,0,.03)}
 .foot{text-align:center;color:var(--ink-soft);font-size:12px;margin-top:32px}
 </style>
 </head>
@@ -182,6 +189,7 @@ textarea:focus{outline:none;border-color:var(--accent);background:#fff}
   <header class="hero">
     <h1>AIもくもく会<br>発表シートメーカー</h1>
     <p class="lead">3ステップで、発表用の1枚シートができあがります。</p>
+    <button class="sample-link" id="sampleBtn" type="button">👀 できあがりの見本を見る（例: 口コミ返信ツール）</button>
     <div class="bar"></div>
   </header>
 
@@ -364,6 +372,43 @@ function parseSheet(raw) {
     }
   });
 
+  /* --- できあがりの見本 --- */
+  var SAMPLE = [
+    '===発表シート===',
+    'なまえ: さとし',
+    'タイトル: 口コミ返信が30分から30秒に',
+    'つくったもの: ChatGPTのプロンプトで、外国人客からの悪い口コミに対して、謝りつつ再来店を促す英文返信を数秒で自動生成するツール',
+    '背景: 外国人客のネガティブなレビューへの返信は必須。でも英語で書くのは大変で、Google翻訳で1件30分かけていた。',
+    'できること1: 口コミをコピペするだけで、丁寧な英文返信が数秒で完成する',
+    'できること2: 謝罪と感謝と次への期待を自然に含めた文が作られる',
+    'できること3: ネガティブなレビューも前向きに変えられる',
+    '利用シーン: 飲食店、ホテル、ツアーガイド、民泊など外国人客を相手にするビジネス。忙しくてレビュー返信が後回しになる場面で活躍する。',
+    '苦労と次の一歩: 手作業では1件30分かかっていた。今はプロンプトを保存した段階。次は複数言語に対応させて、もっと活用を広げたい。',
+    'トーク台本: こんにちは、さとしです。今日発表するのは、外国人客からの口コミに英語で自動返信するツールです。外国人のお客さんと関わるビジネスをしてると、ネガティブなレビューが来ることありますよね。僕はGoogle翻訳で1件30分かけて返信を作ってたんですが、ChatGPTのプロンプトを使うと数秒で丁寧な返信が出てくるようになりました。実例も持ってきたので、ぜひ参考にしてください。',
+    '===ここまで==='
+  ].join('\n');
+  $('sampleBtn').addEventListener('click', function () {
+    $('input').value = SAMPLE;
+    $('makeBtn').click();
+    $('result').scrollIntoView({ behavior: 'smooth' });
+  });
+
+  /* --- URLハッシュ共有: #c=<base64> で開くと自動でシート表示 --- */
+  var b64encode = function (s) {
+    var bytes = new TextEncoder().encode(s), bin = '';
+    bytes.forEach(function (b) { bin += String.fromCharCode(b); });
+    return btoa(bin);
+  };
+  var b64decode = function (s) {
+    return new TextDecoder().decode(Uint8Array.from(atob(s), function (c) { return c.charCodeAt(0); }));
+  };
+  if (location.hash.indexOf('#c=') === 0) {
+    try {
+      $('input').value = b64decode(location.hash.slice(3));
+      setTimeout(function () { $('makeBtn').click(); }, 0);
+    } catch (e) {}
+  }
+
   /* --- ③ シートを作る --- */
   $('makeBtn').addEventListener('click', function () {
     var d = parseSheet($('input').value);
@@ -399,6 +444,7 @@ function parseSheet(raw) {
     });
 
     $('result').hidden = false;
+    try { history.replaceState(null, '', '#c=' + b64encode($('input').value)); } catch (e) {}
     $('result').scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
 
