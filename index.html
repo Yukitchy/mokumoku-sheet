@@ -180,6 +180,10 @@ textarea:focus{outline:none;border-color:var(--accent);background:#fff}
   font-family:inherit;
 }
 .sample-link:hover{background:rgba(0,0,0,.03)}
+.mode-label{
+  font-size:13.5px;font-weight:700;line-height:1.7;
+  padding:10px 14px;background:#F8F6F2;border-radius:10px;margin-bottom:12px;
+}
 .foot{text-align:center;color:var(--ink-soft);font-size:12px;margin-top:32px}
 </style>
 </head>
@@ -196,10 +200,11 @@ textarea:focus{outline:none;border-color:var(--accent);background:#fff}
   <section class="card">
     <div class="step-head">
       <div class="step-no">1</div>
-      <h2>このプロンプトをコピーして、<br>いつものAIに貼る</h2>
+      <h2>自分に合う方のプロンプトを<br>コピーして、いつものAIに貼る</h2>
     </div>
     <p class="note">ChatGPT・Claude・Geminiなど、ふだん使っているAIでOKです。</p>
-    <button class="btn" id="copyBtn" type="button">プロンプトをコピー</button>
+    <div class="mode-label">A. おまかせ — 何を発表するか迷っている人向け。AIが過去のやりとりから候補を出してくれます</div>
+    <button class="btn" id="copyBtn" type="button">おまかせプロンプトをコピー</button>
     <details>
       <summary>プロンプトの中身を見る</summary>
 <pre class="prompt" id="promptText">あなたは「AIもくもく会」の発表アシスタントです。私が今日発表する「AIで作ったもの」を一緒に決めて、最後に「発表シート用コード」を作ってください。
@@ -237,14 +242,53 @@ textarea:focus{outline:none;border-color:var(--accent);background:#fff}
 出力の最後に「このコードをまるごとコピーして、発表シートのページの貼り付け欄に貼ってください」と案内してください。
 それでは手順1の候補リストからどうぞ。</pre>
     </details>
+    <div class="mode-label" style="margin-top:22px">B. じぶんで書く — 発表したいものが決まっている人向け。困りごとと作ったものを自分で書きます。Claude CodeやCursorなど作業フォルダを読めるAIに貼ると、実際のファイルを確認した事実ベースの資料になります</div>
+    <button class="btn" id="copyBtnB" type="button">じぶんで書くプロンプトをコピー</button>
+    <details>
+      <summary>プロンプトの中身を見る</summary>
+<pre class="prompt" id="promptTextB">あなたは「AIもくもく会」の発表アシスタントです。下の【困っていたこと】【作ったもの】を私が埋めてあります。これをもとに、最後に「発表シート用コード」を作ってください。
+
+【困っていたこと】
+（送信する前にここに書く）
+
+【作ったもの】
+（送信する前にここに書く。プロジェクトのフォルダ名・ファイル名が分かればそれも）
+
+進め方:
+- あなたがファイルやフォルダを読める環境（Claude Code・Cursorなど）で動いているなら、まず作ったものの作業フォルダの中身（README・主要ファイル・設定）を実際に開いて確認し、「できること」はそこで確認できた事実だけから書いてください。ファイルで確認できないことは書かない（捏造・盛りすぎ禁止）
+- ファイルを読めない環境なら、私が書いた内容だけを材料にする
+- 足りない項目は1問ずつ、最大3問まで質問して埋める。発表シートに載せる名前（ニックネームOK）も確認する
+- 私の書き方が雑でも、意味を汲み取って読みやすい文章に整える。専門用語はかみくだく
+
+そろったら、以下の書式そのままで「発表シート用コード」を1つのコードブロックで出力してください。
+- タイトル: 作ったものに付ける15字以内のキャッチーな名前
+- つくったもの: 40字前後 / 背景: 60字前後 / 利用シーン: 60字前後 / 苦労と次の一歩: 60字前後
+- できること1〜3: 各20字前後
+- トーク台本: 発表の最初に読み上げる自己紹介込みの原稿。話し言葉で150字前後・改行なし
+
+===発表シート===
+なまえ:
+タイトル:
+つくったもの:
+背景:
+できること1:
+できること2:
+できること3:
+利用シーン:
+苦労と次の一歩:
+トーク台本:
+===ここまで===
+
+出力の最後に「このコードをまるごとコピーして、発表シートのページの貼り付け欄に貼ってください」と案内してください。</pre>
+    </details>
   </section>
 
   <section class="card">
     <div class="step-head">
       <div class="step-no">2</div>
-      <h2>AIが挙げる候補から<br>発表するものを選ぶ</h2>
+      <h2>AIとやりとりして<br>中身をそろえる</h2>
     </div>
-    <p class="note">AIがあなたとの過去のやりとりから「発表映えしそうな作品」を最大5個提案してくれます。選んだら、足りないところだけ2〜3問答えれば完成。</p>
+    <p class="note">おまかせ（A）はAIが候補を最大5個提案→選ぶだけ。じぶんで書く（B）は書いた内容をAIが磨き上げます。どちらも足りないところを2〜3問聞かれるだけです。</p>
     <p class="note">終わると、AIが「発表シート用コード」を出してくれます。</p>
   </section>
 
@@ -345,32 +389,36 @@ function parseSheet(raw) {
   var FALLBACK = '（未記入）';
   var fill = function (id, v) { $(id).textContent = v || FALLBACK; };
 
-  /* --- ① プロンプトをコピー --- */
-  $('copyBtn').addEventListener('click', function () {
-    var btn = this, text = $('promptText').textContent;
-    var done = function () {
-      btn.textContent = 'コピーしました！';
-      btn.classList.add('done');
-      setTimeout(function () {
-        btn.textContent = 'プロンプトをコピー';
-        btn.classList.remove('done');
-      }, 2000);
-    };
-    var fallback = function () {
-      var ta = document.createElement('textarea');
-      ta.value = text;
-      ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0';
-      document.body.appendChild(ta);
-      ta.focus(); ta.select();
-      try { document.execCommand('copy'); done(); } catch (e) { ta.style.opacity = '1'; }
-      document.body.removeChild(ta);
-    };
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(text).then(done, fallback);
-    } else {
-      fallback();
-    }
-  });
+  /* --- ① プロンプトをコピー（A/B両モード） --- */
+  var bindCopy = function (btnId, preId) {
+    $(btnId).addEventListener('click', function () {
+      var btn = this, label = btn.textContent, text = $(preId).textContent;
+      var done = function () {
+        btn.textContent = 'コピーしました！';
+        btn.classList.add('done');
+        setTimeout(function () {
+          btn.textContent = label;
+          btn.classList.remove('done');
+        }, 2000);
+      };
+      var fallback = function () {
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0';
+        document.body.appendChild(ta);
+        ta.focus(); ta.select();
+        try { document.execCommand('copy'); done(); } catch (e) { ta.style.opacity = '1'; }
+        document.body.removeChild(ta);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done, fallback);
+      } else {
+        fallback();
+      }
+    });
+  };
+  bindCopy('copyBtn', 'promptText');
+  bindCopy('copyBtnB', 'promptTextB');
 
   /* --- できあがりの見本 --- */
   var SAMPLE = [
