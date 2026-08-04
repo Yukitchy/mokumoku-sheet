@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>AIもくもく会 発表シートメーカー</title>
+<title>AIもくもく会 発表スライドメーカー</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;700;800&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
@@ -109,7 +109,12 @@ textarea:focus{outline:none;border-color:var(--accent);background:#fff}
 }
 
 /* ---- result ---- */
-#result{margin-top:28px}
+/* .wrap(720px)より広い960pxのスライドを中央に置くための張り出し */
+#result{
+  --deckw:min(960px, calc(100vw - 32px));
+  margin:28px 0 0 calc((100% - var(--deckw)) / 2);
+  width:var(--deckw);
+}
 #result[hidden]{display:none}
 .palette{display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap;margin-bottom:14px}
 .palette span{font-size:12.5px;color:var(--ink-soft);margin-right:2px}
@@ -120,59 +125,104 @@ textarea:focus{outline:none;border-color:var(--accent);background:#fff}
 .sw[aria-pressed="true"]{box-shadow:0 0 0 2.5px var(--ink)}
 .sw.coral{background:#FF6B5A}.sw.teal{background:#12A594}.sw.amber{background:#EF9A21}
 
-.sheet{
-  background:var(--card);border-radius:22px;overflow:hidden;
-  box-shadow:var(--shadow);border:1px solid var(--line);
+/* ---- slide deck ---- */
+.deck{max-width:960px;margin:0 auto}
+.slide{
+  container-type:size;
+  aspect-ratio:16/9;
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:20px;
+  box-shadow:var(--shadow);
+  overflow:hidden;
 }
-.sheet-top{
-  background:var(--accent-soft);
-  border-bottom:3px solid var(--accent);
-  padding:26px 22px 22px;
+.slide[hidden]{display:none}
+.slide-inner{
+  width:100%;height:100%;padding:6cqw 7cqw;
+  display:flex;flex-direction:column;justify-content:center;
+  overflow:auto;
 }
-.sheet-kicker{
+.s-kicker{
   font-family:"M PLUS Rounded 1c",sans-serif;font-weight:700;
-  font-size:11.5px;letter-spacing:.16em;color:var(--accent-deep);margin-bottom:8px;
+  font-size:2.2cqw;letter-spacing:.16em;color:var(--accent-deep);
+  margin-bottom:2cqw;word-break:keep-all;
 }
-.sheet-title{
-  font-size:clamp(24px,6.4vw,34px);margin:0;color:var(--ink);
+.s-title{
+  font-family:"M PLUS Rounded 1c","Noto Sans JP",sans-serif;font-weight:800;
+  font-size:7cqw;line-height:1.32;margin:0;color:var(--ink);
+  word-break:normal;overflow-wrap:anywhere;
 }
-.badge{
-  display:inline-block;margin-top:14px;
+.s-sub{margin:4cqw 0 0;font-size:3.2cqw;line-height:1.7;color:var(--ink-soft)}
+.s-name{
+  position:absolute;right:7cqw;bottom:5cqw;
   background:var(--accent);color:#fff;
-  font-family:"M PLUS Rounded 1c",sans-serif;font-weight:800;font-size:14px;
-  padding:6px 16px;border-radius:99px;word-break:keep-all;
+  font-family:"M PLUS Rounded 1c",sans-serif;font-weight:800;font-size:2.8cqw;
+  padding:1cqw 3cqw;border-radius:99px;word-break:keep-all;
 }
-.sheet-body{padding:22px}
-.sec{margin-bottom:20px}
-.sec:last-child{margin-bottom:0}
-.label{
-  font-family:"M PLUS Rounded 1c",sans-serif;font-weight:800;
-  font-size:12.5px;letter-spacing:.06em;color:var(--accent-deep);
-  display:flex;align-items:center;gap:7px;margin-bottom:5px;word-break:keep-all;
+.slide.cover{position:relative}
+.slide.cover .slide-inner{border-top:1.4cqw solid var(--accent);background:var(--accent-soft);padding-bottom:13cqw}
+.s-head{
+  font-family:"M PLUS Rounded 1c","Noto Sans JP",sans-serif;font-weight:800;
+  font-size:5cqw;margin:0 0 3.5cqw;color:var(--accent-deep);
+  display:flex;align-items:center;gap:2cqw;word-break:keep-all;
 }
-.label::after{content:"";flex:1;height:1px;background:var(--line)}
-.sec p{margin:0;font-size:14.5px}
-.cans{display:grid;grid-template-columns:1fr;gap:9px}
-@media (min-width:560px){ .cans{grid-template-columns:repeat(3,1fr)} }
+.s-head::after{content:"";flex:1;height:.4cqw;background:var(--accent);border-radius:99px;opacity:.45}
+.s-body{margin:0;font-size:3.4cqw;line-height:1.85}
+.cans{display:grid;grid-template-columns:repeat(3,1fr);gap:2.4cqw}
 .can{
   background:var(--accent-soft);border:1px solid var(--line);
-  border-radius:14px;padding:12px 13px;
-  font-size:13.5px;line-height:1.65;
-  display:flex;gap:9px;align-items:flex-start;
+  border-radius:2.4cqw;padding:3cqw;
+  font-size:2.9cqw;line-height:1.6;
 }
 .can b{
-  flex:0 0 auto;width:20px;height:20px;border-radius:50%;
-  background:var(--accent);color:#fff;font-size:11px;font-weight:800;
-  display:flex;align-items:center;justify-content:center;margin-top:2px;
+  display:flex;align-items:center;justify-content:center;
+  width:5cqw;height:5cqw;border-radius:50%;margin-bottom:1.6cqw;
+  background:var(--accent);color:#fff;font-size:2.6cqw;font-weight:800;
   font-family:"M PLUS Rounded 1c",sans-serif;
 }
-.script{
-  background:#F8F6F2;border-left:5px solid var(--accent);
-  border-radius:0 14px 14px 0;padding:16px 18px;margin-top:22px;
+.s-script{margin-top:3cqw;border-top:1px dashed var(--line);padding-top:2cqw}
+.s-script summary{font-size:2.4cqw;list-style:none}
+.s-script p{margin:1.5cqw 0 0;font-size:2.6cqw;line-height:1.9;color:var(--ink-soft)}
+
+/* controls */
+.ctrl{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:16px;flex-wrap:wrap}
+.nav{
+  border:1.5px solid var(--line);background:var(--card);cursor:pointer;
+  font-family:"M PLUS Rounded 1c",sans-serif;font-weight:800;font-size:15px;
+  color:var(--accent-deep);padding:9px 16px;border-radius:12px;
 }
-.script .label{color:var(--ink-soft)}
-.script p{margin:0;font-size:14.5px;line-height:2}
+.nav:disabled{opacity:.35;cursor:default}
+.counter{font-family:"M PLUS Rounded 1c",sans-serif;font-weight:800;font-size:15px;min-width:56px;text-align:center}
+.dots{display:flex;gap:7px;justify-content:center;margin-top:12px}
+.dot{
+  width:10px;height:10px;border-radius:50%;padding:0;cursor:pointer;
+  border:0;background:var(--line);
+}
+.dot[aria-current="true"]{background:var(--accent);transform:scale(1.25)}
+.hint{text-align:center;color:var(--ink-soft);font-size:12.5px;margin:10px 0 0}
+
+/* すべて表示 */
+.deck.all .slide{display:block!important;margin-bottom:18px}
+.deck.all ~ .ctrl,.deck.all ~ .dots{display:none}
+
+.slide:fullscreen,.deck:fullscreen{border-radius:0;border:0}
+.deck:fullscreen{
+  max-width:none;width:100vw;height:100vh;background:var(--bg);
+  display:flex;align-items:center;justify-content:center;
+}
+.deck:fullscreen .slide{width:min(100vw,177.7vh);border-radius:0;border:0;box-shadow:none}
+
 .tip{text-align:center;color:var(--ink-soft);font-size:13px;margin:14px 0 0}
+
+@media (max-width:560px){
+  .cans{grid-template-columns:1fr;gap:1.6cqw}
+  .can{padding:2cqw;font-size:2.6cqw}
+}
+@media print{
+  .wrap>header,.wrap>.card,.palette,.ctrl,.dots,.hint,.tip,.foot,#devbar{display:none!important}
+  .deck{max-width:none}
+  .slide{display:block!important;page-break-after:always;box-shadow:none;margin-bottom:0}
+}
 .sample-link{
   display:inline-block;margin:10px auto 0;padding:8px 18px;
   background:none;border:1.5px dashed var(--accent);border-radius:999px;
@@ -191,8 +241,8 @@ textarea:focus{outline:none;border-color:var(--accent);background:#fff}
 <div class="wrap">
 
   <header class="hero">
-    <h1>AIもくもく会<br>発表シートメーカー</h1>
-    <p class="lead">3ステップで、発表用の1枚シートができあがります。</p>
+    <h1>AIもくもく会<br>発表スライドメーカー</h1>
+    <p class="lead">3ステップで、発表用のスライドができあがります。</p>
     <button class="sample-link" id="sampleBtn" type="button">👀 できあがりの見本を見る（例: 口コミ返信ツール）</button>
     <div class="bar"></div>
   </header>
@@ -207,7 +257,7 @@ textarea:focus{outline:none;border-color:var(--accent);background:#fff}
     <button class="btn" id="copyBtn" type="button">おまかせプロンプトをコピー</button>
     <details>
       <summary>プロンプトの中身を見る</summary>
-<pre class="prompt" id="promptText">あなたは「AIもくもく会」の発表アシスタントです。私が今日発表する「AIで作ったもの」を一緒に決めて、最後に「発表シート用コード」を作ってください。
+<pre class="prompt" id="promptText">あなたは「AIもくもく会」の発表アシスタントです。私が今日発表する「AIで作ったもの」を一緒に決めて、最後に「発表スライド用コード」を作ってください。
 
 手順1（候補さがし）:
 まず、あなたが参照できる範囲（これまでの会話・記憶・過去のやりとり）から、私がAIと一緒に作ったもの・形になった相談ごとを探してください。見つかったら「発表映えしそうな順」に最大5個、番号と1行説明つきでリストアップして、どれを発表するか私に選ばせてください。
@@ -215,14 +265,15 @@ textarea:focus{outline:none;border-color:var(--accent);background:#fff}
 - 過去のやりとりを参照できない・見つからない場合は、正直にそう言って「今日は何を作りましたか？（作りかけでもOK）」と聞いてください
 
 手順2（穴埋め）:
-私が選んだら、あなたが既に知っている情報でシートの下書きをできるだけ埋めてください。足りない項目だけ1問ずつ質問して埋めます（最大3問まで）。発表シートに載せる名前（ニックネームOK）も確認してください。
+私が選んだら、あなたが既に知っている情報でスライドの下書きをできるだけ埋めてください。足りない項目だけ1問ずつ質問して埋めます（最大3問まで）。発表スライドに載せる名前（ニックネームOK）も確認してください。
 - 私の答えが短くても、意味を汲み取って読みやすい文章に整える（事実の捏造・盛りすぎは禁止）
 - 専門用語はかみくだく。むずかしい言葉は使わない
 
 手順3（出力）:
-そろったら、以下の書式そのままで「発表シート用コード」を1つのコードブロックで出力してください。
+そろったら、以下の書式そのままで「発表スライド用コード」を1つのコードブロックで出力してください。
 - タイトル: 作ったものに付ける15字以内のキャッチーな名前
 - つくったもの: 40字前後 / 背景: 60字前後 / 利用シーン: 60字前後 / 苦労と次の一歩: 60字前後
+- どうやって作った: 使った道具（ChatGPT/Claude/GAS/スプレッドシート等）と作り方の流れ・60字前後
 - できること1〜3: 各20字前後
 - トーク台本: 発表の最初に読み上げる自己紹介込みの原稿。話し言葉で150字前後・改行なし
 
@@ -231,6 +282,7 @@ textarea:focus{outline:none;border-color:var(--accent);background:#fff}
 タイトル: 
 つくったもの: 
 背景: 
+どうやって作った: 
 できること1: 
 できること2: 
 できること3: 
@@ -239,14 +291,14 @@ textarea:focus{outline:none;border-color:var(--accent);background:#fff}
 トーク台本: 
 ===ここまで===
 
-出力の最後に「このコードをまるごとコピーして、発表シートのページの貼り付け欄に貼ってください」と案内してください。
+出力の最後に「このコードをまるごとコピーして、発表スライドのページの貼り付け欄に貼ってください」と案内してください。
 それでは手順1の候補リストからどうぞ。</pre>
     </details>
     <div class="mode-label" style="margin-top:22px">B. じぶんで書く — 発表したいものが決まっている人向け。困りごとと作ったものを自分で書きます。Claude CodeやCursorなど作業フォルダを読めるAIに貼ると、実際のファイルを確認した事実ベースの資料になります</div>
     <button class="btn" id="copyBtnB" type="button">じぶんで書くプロンプトをコピー</button>
     <details>
       <summary>プロンプトの中身を見る</summary>
-<pre class="prompt" id="promptTextB">あなたは「AIもくもく会」の発表アシスタントです。下の【困っていたこと】【作ったもの】を私が埋めてあります。これをもとに、最後に「発表シート用コード」を作ってください。
+<pre class="prompt" id="promptTextB">あなたは「AIもくもく会」の発表アシスタントです。下の【困っていたこと】【作ったもの】を私が埋めてあります。これをもとに、最後に「発表スライド用コード」を作ってください。
 
 【困っていたこと】
 （送信する前にここに書く）
@@ -257,12 +309,13 @@ textarea:focus{outline:none;border-color:var(--accent);background:#fff}
 進め方:
 - あなたがファイルやフォルダを読める環境（Claude Code・Cursorなど）で動いているなら、まず作ったものの作業フォルダの中身（README・主要ファイル・設定）を実際に開いて確認し、「できること」はそこで確認できた事実だけから書いてください。ファイルで確認できないことは書かない（捏造・盛りすぎ禁止）
 - ファイルを読めない環境なら、私が書いた内容だけを材料にする
-- 足りない項目は1問ずつ、最大3問まで質問して埋める。発表シートに載せる名前（ニックネームOK）も確認する
+- 足りない項目は1問ずつ、最大3問まで質問して埋める。発表スライドに載せる名前（ニックネームOK）も確認する
 - 私の書き方が雑でも、意味を汲み取って読みやすい文章に整える。専門用語はかみくだく
 
-そろったら、以下の書式そのままで「発表シート用コード」を1つのコードブロックで出力してください。
+そろったら、以下の書式そのままで「発表スライド用コード」を1つのコードブロックで出力してください。
 - タイトル: 作ったものに付ける15字以内のキャッチーな名前
 - つくったもの: 40字前後 / 背景: 60字前後 / 利用シーン: 60字前後 / 苦労と次の一歩: 60字前後
+- どうやって作った: 使った道具（ChatGPT/Claude/GAS/スプレッドシート等）と作り方の流れ・60字前後
 - できること1〜3: 各20字前後
 - トーク台本: 発表の最初に読み上げる自己紹介込みの原稿。話し言葉で150字前後・改行なし
 
@@ -271,6 +324,7 @@ textarea:focus{outline:none;border-color:var(--accent);background:#fff}
 タイトル:
 つくったもの:
 背景:
+どうやって作った:
 できること1:
 できること2:
 できること3:
@@ -279,7 +333,7 @@ textarea:focus{outline:none;border-color:var(--accent);background:#fff}
 トーク台本:
 ===ここまで===
 
-出力の最後に「このコードをまるごとコピーして、発表シートのページの貼り付け欄に貼ってください」と案内してください。</pre>
+出力の最後に「このコードをまるごとコピーして、発表スライドのページの貼り付け欄に貼ってください」と案内してください。</pre>
     </details>
   </section>
 
@@ -289,17 +343,17 @@ textarea:focus{outline:none;border-color:var(--accent);background:#fff}
       <h2>AIとやりとりして<br>中身をそろえる</h2>
     </div>
     <p class="note">おまかせ（A）はAIが候補を最大5個提案→選ぶだけ。じぶんで書く（B）は書いた内容をAIが磨き上げます。どちらも足りないところを2〜3問聞かれるだけです。</p>
-    <p class="note">終わると、AIが「発表シート用コード」を出してくれます。</p>
+    <p class="note">終わると、AIが「発表スライド用コード」を出してくれます。</p>
   </section>
 
   <section class="card">
     <div class="step-head">
       <div class="step-no">3</div>
-      <h2>AIが出した<br>「発表シート用コード」をここに貼る</h2>
+      <h2>AIが出した<br>「発表スライド用コード」をここに貼る</h2>
     </div>
     <p class="note">AIの出力をまるごと貼ってOK。よけいな記号はこちらで取り除きます。</p>
     <textarea id="input" placeholder="===発表シート===&#10;なまえ: ...&#10;タイトル: ...&#10;（ここに貼り付け）"></textarea>
-    <button class="btn" id="makeBtn" type="button">シートを作る</button>
+    <button class="btn" id="makeBtn" type="button">スライドを作る</button>
     <div class="err" id="err" hidden></div>
   </section>
 
@@ -311,49 +365,26 @@ textarea:focus{outline:none;border-color:var(--accent);background:#fff}
       <button class="sw amber" type="button" data-accent="amber" aria-label="アンバー" aria-pressed="false"></button>
     </div>
 
-    <article class="sheet">
-      <div class="sheet-top">
-        <div class="sheet-kicker">AIもくもく会 発表シート</div>
-        <h2 class="sheet-title" id="fTitle"></h2>
-        <div class="badge" id="fName"></div>
-      </div>
-      <div class="sheet-body">
-        <div class="sec">
-          <div class="label">🛠 つくったもの</div>
-          <p id="fWhat"></p>
-        </div>
-        <div class="sec">
-          <div class="label">💡 背景</div>
-          <p id="fWhy"></p>
-        </div>
-        <div class="sec">
-          <div class="label">✨ できること</div>
-          <div class="cans" id="fCans"></div>
-        </div>
-        <div class="sec">
-          <div class="label">📍 利用シーン</div>
-          <p id="fScene"></p>
-        </div>
-        <div class="sec">
-          <div class="label">🚀 苦労と次の一歩</div>
-          <p id="fNext"></p>
-        </div>
-        <div class="script">
-          <div class="label">30秒トーク台本</div>
-          <p id="fScript"></p>
-        </div>
-      </div>
-    </article>
+    <div class="deck" id="deck"></div>
 
-    <p class="tip">スクショや画面共有で、そのまま発表に使えます。</p>
+    <div class="ctrl" id="ctrl">
+      <button class="nav" id="prevBtn" type="button">← 前へ</button>
+      <span class="counter" id="counter"></span>
+      <button class="nav" id="nextBtn" type="button">次へ →</button>
+      <button class="nav" id="allBtn" type="button" aria-pressed="false">すべて表示</button>
+    </div>
+    <div class="dots" id="dots"></div>
+    <p class="hint">← → でめくる ／ <b>f</b> でフルスクリーン（Escで解除）</p>
+
+    <p class="tip">そのままフルスクリーンにして発表できます（←→キーでめくれます）</p>
   </section>
 
-  <p class="foot">AIもくもく会 / 発表シートメーカー</p>
+  <p class="foot">AIもくもく会 / 発表スライドメーカー</p>
 </div>
 
 <script>
 // ---PARSER-START---
-var SHEET_KEYS = ['なまえ','タイトル','つくったもの','背景','できること1','できること2','できること3','利用シーン','苦労と次の一歩','トーク台本'];
+var SHEET_KEYS = ['なまえ','タイトル','つくったもの','背景','どうやって作った','できること1','できること2','できること3','利用シーン','苦労と次の一歩','トーク台本'];
 
 function parseSheet(raw) {
   var out = {}, current = null;
@@ -387,7 +418,6 @@ function parseSheet(raw) {
 
   var $ = function (id) { return document.getElementById(id); };
   var FALLBACK = '（未記入）';
-  var fill = function (id, v) { $(id).textContent = v || FALLBACK; };
 
   /* --- ① プロンプトをコピー（A/B両モード） --- */
   var bindCopy = function (btnId, preId) {
@@ -427,6 +457,7 @@ function parseSheet(raw) {
     'タイトル: 口コミ返信が30分から30秒に',
     'つくったもの: ChatGPTのプロンプトで、外国人客からの悪い口コミに対して、謝りつつ再来店を促す英文返信を数秒で自動生成するツール',
     '背景: 外国人客のネガティブなレビューへの返信は必須。でも英語で書くのは大変で、Google翻訳で1件30分かけていた。',
+    'どうやって作った: ChatGPTに「丁寧な英語の返信を作って」と頼むプロンプトを保存し、口コミを貼るだけで使えるようにした',
     'できること1: 口コミをコピペするだけで、丁寧な英文返信が数秒で完成する',
     'できること2: 謝罪と感謝と次への期待を自然に含めた文が作られる',
     'できること3: ネガティブなレビューも前向きに変えられる',
@@ -457,7 +488,102 @@ function parseSheet(raw) {
     } catch (e) {}
   }
 
-  /* --- ③ シートを作る --- */
+  /* --- ③ スライドを作る --- */
+  var deck = $('deck'), cur = 0, total = 0;
+
+  var el = function (tag, cls, text) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text != null) n.textContent = text;
+    return n;
+  };
+
+  // 見出し＋本文だけの標準スライド
+  var textSlide = function (head, body) {
+    var inner = el('div', 'slide-inner');
+    inner.appendChild(el('h3', 's-head', head));
+    inner.appendChild(el('p', 's-body', body || FALLBACK));
+    return inner;
+  };
+
+  var buildSlides = function (d) {
+    var out = [];
+
+    // 1. 表紙
+    var cover = el('div', 'slide-inner');
+    cover.appendChild(el('div', 's-kicker', 'AIもくもく会 発表'));
+    cover.appendChild(el('h2', 's-title', d['タイトル'] || FALLBACK));
+    cover.appendChild(el('p', 's-sub', d['つくったもの'] || FALLBACK));
+    out.push({ cls: 'slide cover', inner: cover, name: d['なまえ'] || FALLBACK });
+
+    // 2. なぜつくったか
+    out.push({ cls: 'slide', inner: textSlide('なぜつくったか', d['背景']) });
+
+    // 3. どうやって作った（空ならスキップ）
+    if (d['どうやって作った']) {
+      out.push({ cls: 'slide', inner: textSlide('どうやって作った', d['どうやって作った']) });
+    }
+
+    // 4. できること
+    var can = el('div', 'slide-inner');
+    can.appendChild(el('h3', 's-head', 'できること'));
+    var cans = el('div', 'cans');
+    d.cans.forEach(function (c, i) {
+      var box = el('div', 'can');
+      box.appendChild(el('b', null, String(i + 1)));
+      box.appendChild(el('span', null, c || FALLBACK));
+      cans.appendChild(box);
+    });
+    can.appendChild(cans);
+    out.push({ cls: 'slide', inner: can });
+
+    // 5. 使い方・使いどころ
+    out.push({ cls: 'slide', inner: textSlide('使い方・使いどころ', d['利用シーン']) });
+
+    // 6. これから（＋発表者用のトーク台本）
+    var last = textSlide('苦労と、これから', d['苦労と次の一歩']);
+    var det = el('details', 's-script');
+    det.appendChild(el('summary', null, 'トーク台本（発表者用）'));
+    det.appendChild(el('p', null, d['トーク台本'] || FALLBACK));
+    last.appendChild(det);
+    out.push({ cls: 'slide', inner: last });
+
+    return out;
+  };
+
+  var show = function (i) {
+    var slides = deck.children;
+    cur = Math.max(0, Math.min(i, total - 1));
+    for (var n = 0; n < slides.length; n++) slides[n].hidden = (n !== cur);
+    $('counter').textContent = (cur + 1) + ' / ' + total;
+    $('prevBtn').disabled = (cur === 0);
+    $('nextBtn').disabled = (cur === total - 1);
+    Array.prototype.forEach.call($('dots').children, function (d, n) {
+      d.setAttribute('aria-current', String(n === cur));
+    });
+  };
+  var move = function (step) { if (!deck.classList.contains('all')) show(cur + step); };
+
+  var render = function (d) {
+    deck.textContent = '';
+    $('dots').textContent = '';
+    var slides = buildSlides(d);
+    total = slides.length;
+    slides.forEach(function (s, i) {
+      var sec = el('div', s.cls);
+      sec.appendChild(s.inner);
+      if (s.name) sec.appendChild(el('div', 's-name', s.name));
+      deck.appendChild(sec);
+
+      var dot = el('button', 'dot');
+      dot.type = 'button';
+      dot.setAttribute('aria-label', (i + 1) + '枚目');
+      dot.addEventListener('click', function () { show(i); });
+      $('dots').appendChild(dot);
+    });
+    show(0);
+  };
+
   $('makeBtn').addEventListener('click', function () {
     var d = parseSheet($('input').value);
     var err = $('err');
@@ -470,31 +596,41 @@ function parseSheet(raw) {
     }
     err.hidden = true;
 
-    fill('fTitle', d['タイトル']);
-    fill('fName', d['なまえ']);
-    fill('fWhat', d['つくったもの']);
-    fill('fWhy', d['背景']);
-    fill('fScene', d['利用シーン']);
-    fill('fNext', d['苦労と次の一歩']);
-    fill('fScript', d['トーク台本']);
-
-    var cans = $('fCans');
-    cans.textContent = '';
-    d.cans.forEach(function (c, i) {
-      var box = document.createElement('div');
-      box.className = 'can';
-      var no = document.createElement('b');
-      no.textContent = String(i + 1);
-      var sp = document.createElement('span');
-      sp.textContent = c || FALLBACK;
-      box.appendChild(no); box.appendChild(sp);
-      cans.appendChild(box);
-    });
-
+    render(d);
     $('result').hidden = false;
     try { history.replaceState(null, '', '#c=' + b64encode($('input').value)); } catch (e) {}
     $('result').scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
+
+  /* --- めくる: ボタン / キーボード / スワイプ --- */
+  $('prevBtn').addEventListener('click', function () { move(-1); });
+  $('nextBtn').addEventListener('click', function () { move(1); });
+
+  $('allBtn').addEventListener('click', function () {
+    var on = deck.classList.toggle('all');
+    this.setAttribute('aria-pressed', String(on));
+    this.textContent = on ? '1枚ずつ表示' : 'すべて表示';
+    if (!on) show(cur);
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if ($('result').hidden) return;
+    var t = e.target.tagName;
+    if (t === 'TEXTAREA' || t === 'INPUT') return;
+    if (e.key === 'ArrowRight') { move(1); }
+    else if (e.key === 'ArrowLeft') { move(-1); }
+    else if (e.key === 'f' || e.key === 'F') {
+      if (document.fullscreenElement) { document.exitFullscreen(); }
+      else if (deck.requestFullscreen) { deck.requestFullscreen(); }
+    }
+  });
+
+  var tx = 0;
+  deck.addEventListener('touchstart', function (e) { tx = e.changedTouches[0].clientX; }, { passive: true });
+  deck.addEventListener('touchend', function (e) {
+    var dx = e.changedTouches[0].clientX - tx;
+    if (Math.abs(dx) >= 50) move(dx < 0 ? 1 : -1);
+  }, { passive: true });
 
   /* --- 配色切替 --- */
   var sws = document.querySelectorAll('.sw');
