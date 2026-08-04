@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AIもくもく会 発表シートメーカー</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;700;800&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FAF7F2;
+  --card:#FFFFFF;
+  --ink:#23303A;
+  --ink-soft:#5C6B77;
+  --line:#E7E1D8;
+  --accent:#FF6B5A;
+  --accent-soft:#FFF0ED;
+  --accent-deep:#C0402F;
+  --radius:18px;
+  --shadow:0 2px 10px rgba(35,48,58,.06), 0 10px 30px rgba(35,48,58,.06);
+}
+[data-accent="teal"]{ --accent:#12A594; --accent-soft:#E4F6F3; --accent-deep:#0A6A5E; }
+[data-accent="amber"]{ --accent:#EF9A21; --accent-soft:#FEF3E0; --accent-deep:#A9620A; }
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:"Noto Sans JP",system-ui,-apple-system,sans-serif;
+  font-size:15px;
+  line-height:1.85;
+}
+h1,h2,h3,.rounded{
+  font-family:"M PLUS Rounded 1c","Noto Sans JP",system-ui,sans-serif;
+  font-weight:800;
+  word-break:keep-all;
+  line-height:1.4;
+}
+.wrap{max-width:720px;margin:0 auto;padding:20px 16px 72px}
+
+/* ---- header ---- */
+.hero{padding:28px 4px 8px;text-align:center}
+.hero h1{font-size:26px;margin:0 0 10px;letter-spacing:.01em}
+.hero .lead{margin:0;color:var(--ink-soft);font-size:14px}
+.hero .bar{width:56px;height:5px;border-radius:99px;background:var(--accent);margin:16px auto 0}
+
+/* ---- step cards ---- */
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  padding:20px 18px;
+  margin-top:16px;
+}
+.step-head{display:flex;gap:12px;align-items:flex-start;margin-bottom:12px}
+.step-no{
+  flex:0 0 auto;width:32px;height:32px;border-radius:50%;
+  background:var(--accent);color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-family:"M PLUS Rounded 1c",sans-serif;font-weight:800;font-size:16px;
+}
+.step-head h2{font-size:17px;margin:2px 0 0}
+.note{color:var(--ink-soft);font-size:13.5px;margin:0 0 4px}
+.note+.note{margin-top:8px}
+
+.btn{
+  display:block;width:100%;border:0;cursor:pointer;
+  font-family:"M PLUS Rounded 1c",sans-serif;font-weight:800;
+  font-size:17px;color:#fff;background:var(--accent);
+  padding:16px 18px;border-radius:14px;
+  box-shadow:0 4px 0 var(--accent-deep);
+  transition:transform .08s ease, background .2s ease;
+}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--accent-deep)}
+.btn.done{background:var(--accent-deep)}
+.btn.sub{background:var(--card);color:var(--accent-deep);border:2px solid var(--accent);box-shadow:none}
+
+details{margin-top:14px;border-top:1px dashed var(--line);padding-top:12px}
+summary{
+  cursor:pointer;color:var(--ink-soft);font-size:13.5px;
+  font-family:"M PLUS Rounded 1c",sans-serif;font-weight:700;
+  list-style:none;
+}
+summary::-webkit-details-marker{display:none}
+summary::before{content:"▸ ";color:var(--accent)}
+details[open] summary::before{content:"▾ "}
+pre.prompt{
+  margin:12px 0 0;padding:14px;background:#F6F3EE;border-radius:12px;
+  border:1px solid var(--line);
+  white-space:pre-wrap;font-size:12.5px;line-height:1.8;
+  font-family:ui-monospace,"Noto Sans JP",monospace;
+  color:var(--ink-soft);max-height:320px;overflow:auto;
+}
+textarea{
+  width:100%;min-height:170px;padding:14px;
+  border:2px solid var(--line);border-radius:14px;background:#FCFBF9;
+  font-family:ui-monospace,"Noto Sans JP",monospace;font-size:13px;line-height:1.7;
+  color:var(--ink);resize:vertical;margin-bottom:12px;
+}
+textarea:focus{outline:none;border-color:var(--accent);background:#fff}
+
+.err{
+  margin-top:14px;padding:14px 16px;border-radius:14px;
+  background:#FFF4F1;border:1px solid #F6C9BE;color:#9A3E2A;font-size:14px;
+}
+
+/* ---- result ---- */
+#result{margin-top:28px}
+#result[hidden]{display:none}
+.palette{display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap;margin-bottom:14px}
+.palette span{font-size:12.5px;color:var(--ink-soft);margin-right:2px}
+.sw{
+  width:34px;height:34px;border-radius:50%;border:2px solid #fff;cursor:pointer;
+  box-shadow:0 0 0 1.5px var(--line);padding:0;
+}
+.sw[aria-pressed="true"]{box-shadow:0 0 0 2.5px var(--ink)}
+.sw.coral{background:#FF6B5A}.sw.teal{background:#12A594}.sw.amber{background:#EF9A21}
+
+.sheet{
+  background:var(--card);border-radius:22px;overflow:hidden;
+  box-shadow:var(--shadow);border:1px solid var(--line);
+}
+.sheet-top{
+  background:var(--accent-soft);
+  border-bottom:3px solid var(--accent);
+  padding:26px 22px 22px;
+}
+.sheet-kicker{
+  font-family:"M PLUS Rounded 1c",sans-serif;font-weight:700;
+  font-size:11.5px;letter-spacing:.16em;color:var(--accent-deep);margin-bottom:8px;
+}
+.sheet-title{
+  font-size:clamp(24px,6.4vw,34px);margin:0;color:var(--ink);
+}
+.badge{
+  display:inline-block;margin-top:14px;
+  background:var(--accent);color:#fff;
+  font-family:"M PLUS Rounded 1c",sans-serif;font-weight:800;font-size:14px;
+  padding:6px 16px;border-radius:99px;word-break:keep-all;
+}
+.sheet-body{padding:22px}
+.sec{margin-bottom:20px}
+.sec:last-child{margin-bottom:0}
+.label{
+  font-family:"M PLUS Rounded 1c",sans-serif;font-weight:800;
+  font-size:12.5px;letter-spacing:.06em;color:var(--accent-deep);
+  display:flex;align-items:center;gap:7px;margin-bottom:5px;word-break:keep-all;
+}
+.label::after{content:"";flex:1;height:1px;background:var(--line)}
+.sec p{margin:0;font-size:14.5px}
+.cans{display:grid;grid-template-columns:1fr;gap:9px}
+@media (min-width:560px){ .cans{grid-template-columns:repeat(3,1fr)} }
+.can{
+  background:var(--accent-soft);border:1px solid var(--line);
+  border-radius:14px;padding:12px 13px;
+  font-size:13.5px;line-height:1.65;
+  display:flex;gap:9px;align-items:flex-start;
+}
+.can b{
+  flex:0 0 auto;width:20px;height:20px;border-radius:50%;
+  background:var(--accent);color:#fff;font-size:11px;font-weight:800;
+  display:flex;align-items:center;justify-content:center;margin-top:2px;
+  font-family:"M PLUS Rounded 1c",sans-serif;
+}
+.script{
+  background:#F8F6F2;border-left:5px solid var(--accent);
+  border-radius:0 14px 14px 0;padding:16px 18px;margin-top:22px;
+}
+.script .label{color:var(--ink-soft)}
+.script p{margin:0;font-size:14.5px;line-height:2}
+.tip{text-align:center;color:var(--ink-soft);font-size:13px;margin:14px 0 0}
+.foot{text-align:center;color:var(--ink-soft);font-size:12px;margin-top:32px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <h1>AIもくもく会<br>発表シートメーカー</h1>
+    <p class="lead">3ステップで、発表用の1枚シートができあがります。</p>
+    <div class="bar"></div>
+  </header>
+
+  <section class="card">
+    <div class="step-head">
+      <div class="step-no">1</div>
+      <h2>このプロンプトをコピーして、<br>いつものAIに貼る</h2>
+    </div>
+    <p class="note">ChatGPT・Claude・Geminiなど、ふだん使っているAIでOKです。</p>
+    <button class="btn" id="copyBtn" type="button">プロンプトをコピー</button>
+    <details>
+      <summary>プロンプトの中身を見る</summary>
+<pre class="prompt" id="promptText">あなたは「AIもくもく会」の発表インタビュアーです。これから質問を1問ずつ出して私の答えを待ち、最後に「発表シート用コード」を作ってください。
+
+ルール:
+- 必ず1問ずつ質問し、私の答えを待ってから次へ進む
+- 私の答えが短くても、意味を汲み取って読みやすい文章に整える（事実の捏造・盛りすぎは禁止）
+- 専門用語はかみくだく。むずかしい言葉は使わない
+- 各質問の頭に「【質問1/6】」のように進み具合を付ける
+
+質問（この順番で）:
+1. 発表シートに載せるお名前（ニックネームOK）を教えてください
+2. AIを使って何を作りましたか？（作りかけ・途中でもOK）
+3. なぜ作ろうと思いましたか？きっかけや困りごとは？
+4. それは何ができますか？思いつくだけ挙げてください（あとで3つに整理します）
+5. 誰が・どんな場面で使うと嬉しいですか？
+6. 作ってみて大変だったこと、次にやりたいことは？
+
+6問終わったら、以下の書式そのままで「発表シート用コード」を1つのコードブロックで出力してください。
+- タイトル: 作ったものに付ける15字以内のキャッチーな名前
+- つくったもの: 40字前後 / 背景: 60字前後 / 利用シーン: 60字前後 / 苦労と次の一歩: 60字前後
+- できること1〜3: 各20字前後
+- トーク台本: 発表の最初に読み上げる自己紹介込みの原稿。話し言葉で150字前後・改行なし
+
+===発表シート===
+なまえ: 
+タイトル: 
+つくったもの: 
+背景: 
+できること1: 
+できること2: 
+できること3: 
+利用シーン: 
+苦労と次の一歩: 
+トーク台本: 
+===ここまで===
+
+出力の最後に「このコードをまるごとコピーして、発表シートのページの貼り付け欄に貼ってください」と案内してください。
+それでは【質問1/6】からどうぞ。</pre>
+    </details>
+  </section>
+
+  <section class="card">
+    <div class="step-head">
+      <div class="step-no">2</div>
+      <h2>AIの質問に6問答える</h2>
+    </div>
+    <p class="note">答えは短くて大丈夫です。ひとことでも、AIが読みやすい文章にまとめてくれます。</p>
+    <p class="note">6問終わると、AIが「発表シート用コード」を出してくれます。</p>
+  </section>
+
+  <section class="card">
+    <div class="step-head">
+      <div class="step-no">3</div>
+      <h2>AIが出した<br>「発表シート用コード」をここに貼る</h2>
+    </div>
+    <p class="note">AIの出力をまるごと貼ってOK。よけいな記号はこちらで取り除きます。</p>
+    <textarea id="input" placeholder="===発表シート===&#10;なまえ: ...&#10;タイトル: ...&#10;（ここに貼り付け）"></textarea>
+    <button class="btn" id="makeBtn" type="button">シートを作る</button>
+    <div class="err" id="err" hidden></div>
+  </section>
+
+  <section id="result" hidden>
+    <div class="palette">
+      <span>色をえらぶ</span>
+      <button class="sw coral" type="button" data-accent="coral" aria-label="コーラル" aria-pressed="true"></button>
+      <button class="sw teal" type="button" data-accent="teal" aria-label="ティール" aria-pressed="false"></button>
+      <button class="sw amber" type="button" data-accent="amber" aria-label="アンバー" aria-pressed="false"></button>
+    </div>
+
+    <article class="sheet">
+      <div class="sheet-top">
+        <div class="sheet-kicker">AIもくもく会 発表シート</div>
+        <h2 class="sheet-title" id="fTitle"></h2>
+        <div class="badge" id="fName"></div>
+      </div>
+      <div class="sheet-body">
+        <div class="sec">
+          <div class="label">🛠 つくったもの</div>
+          <p id="fWhat"></p>
+        </div>
+        <div class="sec">
+          <div class="label">💡 背景</div>
+          <p id="fWhy"></p>
+        </div>
+        <div class="sec">
+          <div class="label">✨ できること</div>
+          <div class="cans" id="fCans"></div>
+        </div>
+        <div class="sec">
+          <div class="label">📍 利用シーン</div>
+          <p id="fScene"></p>
+        </div>
+        <div class="sec">
+          <div class="label">🚀 苦労と次の一歩</div>
+          <p id="fNext"></p>
+        </div>
+        <div class="script">
+          <div class="label">30秒トーク台本</div>
+          <p id="fScript"></p>
+        </div>
+      </div>
+    </article>
+
+    <p class="tip">スクショや画面共有で、そのまま発表に使えます。</p>
+  </section>
+
+  <p class="foot">AIもくもく会 / 発表シートメーカー</p>
+</div>
+
+<script>
+// ---PARSER-START---
+var SHEET_KEYS = ['なまえ','タイトル','つくったもの','背景','できること1','できること2','できること3','利用シーン','苦労と次の一歩','トーク台本'];
+
+function parseSheet(raw) {
+  var out = {}, current = null;
+
+  String(raw == null ? '' : raw).replace(/\r\n?/g, '\n').split('\n').forEach(function (line) {
+    var t = line.trim();
+    if (/^```/.test(t)) return;                                  // コードフェンス
+    if (/^=+\s*(発表シート|ここまで)\s*=+$/.test(t)) return;      // 区切り行
+    t = t.replace(/^[-*・]\s+/, '').replace(/\*\*/g, '').trim();  // 箇条書き記号・太字
+    if (!t) return;
+
+    var m = t.match(/^([^:：]{1,24})[ 　]*[:：][ 　]*([\s\S]*)$/);
+    if (m && SHEET_KEYS.indexOf(m[1].trim()) !== -1) {
+      current = m[1].trim();
+      out[current] = m[2].trim();
+    } else if (current) {
+      out[current] = (out[current] || '') + t;                    // 折り返された続き行
+    }
+  });
+
+  var data = {};
+  SHEET_KEYS.forEach(function (k) { data[k] = out[k] || ''; });
+  data.cans = [data['できること1'], data['できること2'], data['できること3']];
+  data.ok = !!(data['なまえ'] || data['タイトル']);
+  return data;
+}
+// ---PARSER-END---
+
+(function () {
+  if (typeof document === 'undefined') return;
+
+  var $ = function (id) { return document.getElementById(id); };
+  var FALLBACK = '（未記入）';
+  var fill = function (id, v) { $(id).textContent = v || FALLBACK; };
+
+  /* --- ① プロンプトをコピー --- */
+  $('copyBtn').addEventListener('click', function () {
+    var btn = this, text = $('promptText').textContent;
+    var done = function () {
+      btn.textContent = 'コピーしました！';
+      btn.classList.add('done');
+      setTimeout(function () {
+        btn.textContent = 'プロンプトをコピー';
+        btn.classList.remove('done');
+      }, 2000);
+    };
+    var fallback = function () {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0';
+      document.body.appendChild(ta);
+      ta.focus(); ta.select();
+      try { document.execCommand('copy'); done(); } catch (e) { ta.style.opacity = '1'; }
+      document.body.removeChild(ta);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done, fallback);
+    } else {
+      fallback();
+    }
+  });
+
+  /* --- ③ シートを作る --- */
+  $('makeBtn').addEventListener('click', function () {
+    var d = parseSheet($('input').value);
+    var err = $('err');
+
+    if (!d.ok) {
+      err.textContent = 'コードがうまく読み取れませんでした。AIの出力をまるごと貼ってみてください。';
+      err.hidden = false;
+      $('result').hidden = true;
+      return;
+    }
+    err.hidden = true;
+
+    fill('fTitle', d['タイトル']);
+    fill('fName', d['なまえ']);
+    fill('fWhat', d['つくったもの']);
+    fill('fWhy', d['背景']);
+    fill('fScene', d['利用シーン']);
+    fill('fNext', d['苦労と次の一歩']);
+    fill('fScript', d['トーク台本']);
+
+    var cans = $('fCans');
+    cans.textContent = '';
+    d.cans.forEach(function (c, i) {
+      var box = document.createElement('div');
+      box.className = 'can';
+      var no = document.createElement('b');
+      no.textContent = String(i + 1);
+      var sp = document.createElement('span');
+      sp.textContent = c || FALLBACK;
+      box.appendChild(no); box.appendChild(sp);
+      cans.appendChild(box);
+    });
+
+    $('result').hidden = false;
+    $('result').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+
+  /* --- 配色切替 --- */
+  var sws = document.querySelectorAll('.sw');
+  Array.prototype.forEach.call(sws, function (b) {
+    b.addEventListener('click', function () {
+      document.documentElement.setAttribute('data-accent', b.dataset.accent);
+      Array.prototype.forEach.call(sws, function (o) {
+        o.setAttribute('aria-pressed', String(o === b));
+      });
+    });
+  });
+})();
+</script>
+<script src="devbar.js"></script>
+</body>
+</html>
