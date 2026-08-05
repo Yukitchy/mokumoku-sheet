@@ -161,6 +161,8 @@ textarea:focus{outline:none;border-color:var(--accent);background:#fff}
 }
 .slide.cover{position:relative}
 .slide.cover .slide-inner{border-top:1.4cqw solid var(--accent);background:var(--accent-soft);padding-bottom:13cqw}
+.slide.outro .slide-inner{border-top:1.4cqw solid var(--accent);background:var(--accent-soft);align-items:center}
+.s-outro{margin:0;font-size:4.6cqw;line-height:1.75;text-align:center;color:var(--ink)}
 .s-head{
   font-family:"M PLUS Rounded 1c","Noto Sans JP",sans-serif;font-weight:800;
   font-size:5cqw;margin:0 0 3.5cqw;color:var(--accent-deep);
@@ -276,19 +278,21 @@ textarea:focus{outline:none;border-color:var(--accent);background:#fff}
 - どうやって作った: 使った道具（ChatGPT/Claude/GAS/スプレッドシート等）と作り方の流れ・60字前後
 - できること1〜3: 各20字前後
 - トーク台本: 発表の最初に読み上げる自己紹介込みの原稿。話し言葉で150字前後・改行なし
+- おわりに: 発表の締めに言いたいこと。無ければ空でOK・60字前後
 
 ===発表シート===
-なまえ: 
-タイトル: 
-つくったもの: 
-背景: 
-どうやって作った: 
-できること1: 
-できること2: 
-できること3: 
-利用シーン: 
-苦労と次の一歩: 
-トーク台本: 
+なまえ:
+タイトル:
+つくったもの:
+背景:
+どうやって作った:
+できること1:
+できること2:
+できること3:
+利用シーン:
+苦労と次の一歩:
+トーク台本:
+おわりに:
 ===ここまで===
 
 出力の最後に「このコードをまるごとコピーして、発表スライドのページの貼り付け欄に貼ってください」と案内してください。
@@ -318,6 +322,7 @@ textarea:focus{outline:none;border-color:var(--accent);background:#fff}
 - どうやって作った: 使った道具（ChatGPT/Claude/GAS/スプレッドシート等）と作り方の流れ・60字前後
 - できること1〜3: 各20字前後
 - トーク台本: 発表の最初に読み上げる自己紹介込みの原稿。話し言葉で150字前後・改行なし
+- おわりに: 発表の締めに言いたいこと。無ければ空でOK・60字前後
 
 ===発表シート===
 なまえ:
@@ -331,6 +336,7 @@ textarea:focus{outline:none;border-color:var(--accent);background:#fff}
 利用シーン:
 苦労と次の一歩:
 トーク台本:
+おわりに:
 ===ここまで===
 
 出力の最後に「このコードをまるごとコピーして、発表スライドのページの貼り付け欄に貼ってください」と案内してください。</pre>
@@ -384,7 +390,7 @@ textarea:focus{outline:none;border-color:var(--accent);background:#fff}
 
 <script>
 // ---PARSER-START---
-var SHEET_KEYS = ['なまえ','タイトル','つくったもの','背景','どうやって作った','できること1','できること2','できること3','利用シーン','苦労と次の一歩','トーク台本'];
+var SHEET_KEYS = ['なまえ','タイトル','つくったもの','背景','どうやって作った','できること1','できること2','できること3','利用シーン','苦労と次の一歩','トーク台本','おわりに'];
 
 function parseSheet(raw) {
   var out = {}, current = null;
@@ -547,6 +553,13 @@ function parseSheet(raw) {
     det.appendChild(el('p', null, d['トーク台本'] || FALLBACK));
     last.appendChild(det);
     out.push({ cls: 'slide', inner: last });
+
+    // 7. おわりに（空ならスキップ）
+    if (d['おわりに']) {
+      var outro = el('div', 'slide-inner');
+      outro.appendChild(el('p', 's-outro', d['おわりに']));
+      out.push({ cls: 'slide outro', inner: outro });
+    }
 
     return out;
   };
