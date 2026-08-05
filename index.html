@@ -494,6 +494,15 @@ function parseSheet(raw) {
     } catch (e) {}
   }
 
+  /* --- 保存済みデッキ読み込み: ?d=<名前> で decks/<名前>.txt を読む --- */
+  var dm = location.search.match(/[?&]d=([A-Za-z0-9_-]+)/);
+  if (dm) {
+    fetch('decks/' + dm[1] + '.txt', { cache: 'no-store' })
+      .then(function (r) { if (!r.ok) throw 0; return r.text(); })
+      .then(function (t) { $('input').value = t; $('makeBtn').click(); $('result').scrollIntoView(); })
+      .catch(function () {});
+  }
+
   /* --- ③ スライドを作る --- */
   var deck = $('deck'), cur = 0, total = 0;
 
